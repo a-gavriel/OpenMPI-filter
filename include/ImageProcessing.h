@@ -56,15 +56,14 @@ void write_image(char* filename, uint8_t* image){
     kernel_size: Kernel size of the filter
 */
 uint8_t* apply_filter(  uint8_t* target,
+                        uint8_t* filtered_image,
                         uint8_t (*filter)(uint8_t*, size_t*, uint8_t),
-                        uint8_t kernel_size,
+                        uint8_t kernel_size,                        
                         uint32_t start_row,
                         uint32_t end_row){
 
     //Prepare variables needed for the convolution process
-    size_t pos[2];
-    uint8_t* filtered_image = (uint8_t*) malloc(WIDTH*(HEIGHT)*CHANNELS * sizeof(uint8_t));
-
+    size_t pos[2];    
 
     // Start the convolution
     // HEIGHT and WIDTH limits have to be multiplicated to take into account
@@ -89,7 +88,7 @@ uint8_t* apply_filter(  uint8_t* target,
     }
 
     // Return result
-    return filtered_image;
+    return 0;
 
 }
 
@@ -140,45 +139,45 @@ uint8_t get_strongest_channel(uint8_t* image){
 }
 
 
-int processImage(  char originalName [256], char filteredName[256], int filters, uint8_t kmedian, uint8_t kavg , uint32_t start_row, uint32_t end_row){
+int processImage(uint8_t* image, uint8_t* filtered_image, 
+    int filters, 
+    uint8_t kmedian, uint8_t kavg, 
+    uint32_t start_row, uint32_t end_row){
 
     // Load the image
-    uint8_t* image = read_image( originalName, WIDTH, HEIGHT, CHANNELS, CHANNELS);    
-
-    uint8_t* filtered_image;
+    
+    
 
     if (filters == 1){
-        filtered_image = apply_filter(image, &median_filter, kmedian, start_row, end_row);
+        filtered_image = apply_filter(image, filtered_image, &median_filter, kmedian, start_row, end_row);
         stbi_image_free(image);
 
     }else if(filters == 2){
-        filtered_image = apply_filter(image, &avg_filter, kavg, start_row, end_row);
+        filtered_image = apply_filter(image, filtered_image, &avg_filter, kavg, start_row, end_row);
         stbi_image_free(image);
 
     }else if(filters == 3){
-        filtered_image = apply_filter(image, &median_filter, kmedian, start_row, end_row);
+        filtered_image = apply_filter(image, filtered_image, &median_filter, kmedian, start_row, end_row);
         stbi_image_free(image);
         image = filtered_image;
-        filtered_image = apply_filter(image, &avg_filter, kavg, start_row, end_row);
+        filtered_image = apply_filter(image, filtered_image, &avg_filter, kavg, start_row, end_row);
         free(image);
 
     }else if(filters == 4){    
-        filtered_image = apply_filter(image, &avg_filter, kavg, start_row, end_row);
+        filtered_image = apply_filter(image, filtered_image, &avg_filter, kavg, start_row, end_row);
         stbi_image_free(image);
         image = filtered_image;
-        filtered_image = apply_filter(image, &median_filter, kmedian, start_row, end_row);
+        filtered_image = apply_filter(image, filtered_image, &median_filter, kmedian, start_row, end_row);
         free(image);
 
     }else{
         // Start the convolution
-        filtered_image = apply_filter(image, &median_filter, 3, start_row, end_row);
+        filtered_image = apply_filter(image, filtered_image, &median_filter, 3, start_row, end_row);
         // Store the filtered image
         stbi_image_free(image);
     }
 
-    write_image(filteredName, filtered_image);
-    // Free the memory of the images
-    free(filtered_image);
+    
 
     
     

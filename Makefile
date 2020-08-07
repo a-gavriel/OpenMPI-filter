@@ -20,6 +20,8 @@ clean:
 createBin:
 	@mkdir -p $(BIN_DIR)
 
+run: filter
+	cd bin && mpirun -n 2 ./filter Lenna.jpg out.jpg 4
 
 CFILES = $(SRC_DIR)/getImageSize.c $(SRC_DIR)/main.c
 filter: 

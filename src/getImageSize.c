@@ -6,9 +6,11 @@
 
 #include "../include/getImageSize.h"
 
-uint32_t reverse_bytes(uint32_t bytes)
+
+
+unsigned int reverse_bytes(unsigned int bytes)
 {
-    uint32_t aux = 0;
+    unsigned int aux = 0;
     uint8_t byte;
     int i;
 
@@ -21,7 +23,7 @@ uint32_t reverse_bytes(uint32_t bytes)
 }
 
 
-int scanhead_JPEG (FILE * infile, uint32_t * image_width, uint32_t * image_height) {
+int scanhead_JPEG (FILE * infile, unsigned int * image_width, unsigned int * image_height) {
   int marker=0;
   int dummy=0;
   if ( getc(infile) != 0xFF || getc(infile) != 0xD8 )
@@ -86,8 +88,8 @@ int scanhead_JPEG (FILE * infile, uint32_t * image_width, uint32_t * image_heigh
 }
 
 
-int scanhead_PNG(FILE * fp, uint32_t * image_width, uint32_t * image_height) {
-  uint32_t reversedW, reversedH;
+int scanhead_PNG(FILE * fp, unsigned int * image_width, unsigned int * image_height) {
+  unsigned int reversedW, reversedH;
 
   fseek(fp, 16, SEEK_SET);
   fread(&reversedW, 4, 1, fp);
@@ -101,7 +103,7 @@ int scanhead_PNG(FILE * fp, uint32_t * image_width, uint32_t * image_height) {
 }
 
 
-int getImageSize(char fname[256], uint32_t * image_width, uint32_t * image_height) {
+int getImageSize(char fname[256], unsigned int * image_width, unsigned int * image_height) {
   char * isPNG = strstr(fname,"png");
   char * isJPEG = strstr(fname,"jpeg");
   char * isJPG = strstr(fname,"jpg");

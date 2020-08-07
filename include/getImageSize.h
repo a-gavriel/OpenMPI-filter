@@ -2,7 +2,7 @@
 #define GET_IMG_SIZE
 #include <stdint.h>
 
-uint32_t reverse_bytes(uint32_t bytes);
+unsigned int reverse_bytes(unsigned int bytes);
 
 
 #define readbyte(a,b) do if(((a)=getc((b))) == EOF) return 0; while (0)
@@ -13,11 +13,11 @@ uint32_t reverse_bytes(uint32_t bytes);
                           } while(0)
 
 
-int scanhead_JPEG (FILE * infile, uint32_t * image_width, uint32_t * image_height);
+int scanhead_JPEG (FILE * infile, unsigned int * image_width, unsigned int * image_height);
 
-int scanhead_PNG(FILE * fp, uint32_t * image_width, uint32_t * image_height);
+int scanhead_PNG(FILE * fp, unsigned int * image_width, unsigned int * image_height);
 
-int getImageSize(char fname[256], uint32_t * image_width, uint32_t * image_height);
+int getImageSize(char fname[256], unsigned int * image_width, unsigned int * image_height);
 
 
 #endif
