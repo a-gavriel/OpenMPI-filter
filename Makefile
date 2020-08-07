@@ -23,6 +23,15 @@ createBin:
 run: filter
 	cd bin && mpirun -n 2 ./filter Lenna.jpg out.jpg 4
 
+run2: filter
+	cd bin && mpirun -n 2 ./filter Lenna.jpg out.jpg 20
+
+run3: filter
+	cd bin && mpirun -n 3 ./filter Lenna.jpg out.jpg 4
+
+run4: filter
+	cd bin && mpirun -n 4 ./filter Lenna.jpg out.jpg 4
+
 CFILES = $(SRC_DIR)/getImageSize.c $(SRC_DIR)/main.c
 filter: 
 	$(CC) $(CFILES) -o $(BIN_DIR)/filter $(LDLIBS) $(CFLAGS)

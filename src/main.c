@@ -34,10 +34,7 @@ int main(int argc, char **argv){
   // Get my rank and the number of ranks
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &n_ranks);
-  if(n_ranks != 2){
-    printf("only runs with n = 2\n");
-    return 1;
-  }
+
 
   uint8_t* image;
   uint8_t* filtered_image;
@@ -46,19 +43,35 @@ int main(int argc, char **argv){
   image = read_image( input_image, WIDTH, HEIGHT, CHANNELS, CHANNELS);
   filtered_image = (uint8_t*) malloc(WIDTH*(HEIGHT)*CHANNELS * sizeof(uint8_t));
 
+  unsigned int row_first, rows_per_rank, row_last;
+  rows_per_rank = HEIGHT /(n_ranks-1);
+  
+
   if (rank == 0){
-    
-    
-    
-    MPI_Recv(filtered_image, WIDTH*HEIGHT*CHANNELS, MPI_BYTE, 1, 0, MPI_COMM_WORLD, &status);
-    
+            
+    for(int i=0;i<n_ranks-1;++i)   {
+      row_first = i * rows_per_rank;
+      MPI_Recv(filtered_image+row_first*WIDTH*CHANNELS, WIDTH*rows_per_rank*CHANNELS, MPI_BYTE, i+1, 0, MPI_COMM_WORLD, &status);    
+    }
     write_image(ouput_image, filtered_image);
     printf("received image from %d\n",rank);
     
-  }else{    
-
-    processImage( image , filtered_image, 1, window_size, window_size, 0, HEIGHT );
-    MPI_Send(filtered_image, WIDTH*HEIGHT*CHANNELS, MPI_BYTE, 0, 0, MPI_COMM_WORLD);
+  }else{   
+    /* 
+    if( HEIGHT%(n_ranks-1) > 0 ){
+    // Add 1 in case the number of ranks doesn't divide the number of numbers
+    rows_per_rank += 1;
+  }*/
+    unsigned int extra = 0;
+    if(rank == n_ranks - 1){
+      extra = HEIGHT % rows_per_rank;
+    }
+    // Figure out the first and the last iteration for this rank
+    row_first = (rank-1) * rows_per_rank;
+    row_last = row_first + rows_per_rank + 0;
+    
+    processImage( image , filtered_image, 1, window_size, window_size, row_first, row_last );
+    MPI_Send(filtered_image+row_first*WIDTH*CHANNELS, WIDTH*rows_per_rank*CHANNELS, MPI_BYTE, 0, 0, MPI_COMM_WORLD);
     printf("send image from %d\n",rank);
       
   }

@@ -59,8 +59,8 @@ uint8_t* apply_filter(  uint8_t* target,
                         uint8_t* filtered_image,
                         uint8_t (*filter)(uint8_t*, size_t*, uint8_t),
                         uint8_t kernel_size,                        
-                        uint32_t start_row,
-                        uint32_t end_row){
+                        unsigned int start_row,
+                        unsigned int end_row){
 
     //Prepare variables needed for the convolution process
     size_t pos[2];    
@@ -68,7 +68,7 @@ uint8_t* apply_filter(  uint8_t* target,
     // Start the convolution
     // HEIGHT and WIDTH limits have to be multiplicated to take into account
     // the channels of the image
-    for (size_t h = 0*WIDTH*CHANNELS; h < HEIGHT*WIDTH*CHANNELS; h += WIDTH*CHANNELS)
+    for (size_t h = start_row*WIDTH*CHANNELS; h < end_row*WIDTH*CHANNELS; h += WIDTH*CHANNELS)
     {
         pos[1] = h;
         for (size_t w = 0; w < WIDTH*CHANNELS; w += CHANNELS)
@@ -143,10 +143,6 @@ int processImage(uint8_t* image, uint8_t* filtered_image,
     int filters, 
     uint8_t kmedian, uint8_t kavg, 
     uint32_t start_row, uint32_t end_row){
-
-    // Load the image
-    
-    
 
     if (filters == 1){
         filtered_image = apply_filter(image, filtered_image, &median_filter, kmedian, start_row, end_row);
