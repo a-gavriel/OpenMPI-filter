@@ -39,20 +39,31 @@ int main(int argc, char **argv){
   uint8_t* image;
   uint8_t* filtered_image;
 
-  getImageSize(input_image, &WIDTH, &HEIGHT);
-  image = read_image( input_image, WIDTH, HEIGHT, CHANNELS, CHANNELS);
-  filtered_image = (uint8_t*) malloc(WIDTH*(HEIGHT)*CHANNELS * sizeof(uint8_t));
+  
+
 
   unsigned int row_first, rows_per_rank, row_last;
   rows_per_rank = HEIGHT /(n_ranks-1);
   
+    getImageSize(input_image, &WIDTH, &HEIGHT);
+    image = read_image( input_image, WIDTH, HEIGHT, CHANNELS, CHANNELS);
+    filtered_image = (uint8_t*) malloc(WIDTH*(HEIGHT)*CHANNELS * sizeof(uint8_t));
 
   if (rank == 0){
-            
-    for(int i=0;i<n_ranks-1;++i)   {
+
+    
+/*
+    for(int i=0;i<n_ranks-1;++i){
       row_first = i * rows_per_rank;
       MPI_Recv(filtered_image+row_first*WIDTH*CHANNELS, WIDTH*rows_per_rank*CHANNELS, MPI_BYTE, i+1, 0, MPI_COMM_WORLD, &status);    
     }
+*/
+
+    for(int i=0;i<n_ranks-1;++i){
+      row_first = i * rows_per_rank;
+      MPI_Recv(filtered_image+row_first*WIDTH*CHANNELS, WIDTH*rows_per_rank*CHANNELS, MPI_BYTE, i+1, 0, MPI_COMM_WORLD, &status);    
+    }    
+    
     write_image(ouput_image, filtered_image);
     printf("received image from %d\n",rank);
     
@@ -61,7 +72,7 @@ int main(int argc, char **argv){
     if( HEIGHT%(n_ranks-1) > 0 ){
     // Add 1 in case the number of ranks doesn't divide the number of numbers
     rows_per_rank += 1;
-  }*/
+    }*/
     unsigned int extra = 0;
     if(rank == n_ranks - 1){
       extra = HEIGHT % rows_per_rank;
