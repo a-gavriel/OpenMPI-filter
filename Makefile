@@ -28,7 +28,7 @@ cluster: filter
 	cd ../shared-task && mpirun --hostfile /etc/hosts -np 6 ./filter test1.jpg out.jpg 5
 
 CFILES = $(SRC_DIR)/getImageSize.c $(SRC_DIR)/main.c
-filter: 
+filter: createBin
 	$(CC) $(CFILES) -o $(BIN_DIR)/filter $(LDLIBS) $(CFLAGS)
 
 
