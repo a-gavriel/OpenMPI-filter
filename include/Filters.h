@@ -25,8 +25,9 @@ uint8_t avg_filter(uint8_t* image, size_t* pos, uint8_t kernel_size){
 
     get_values(values, image, pos, kernel_size);
     // Accumulator and total elements
-    uint8_t avg = 0;
-    uint8_t total_elements = kernel_size*kernel_size;
+    uint avg = 0;
+    uint total_elements = kernel_size*kernel_size;
+    uint8_t result;
 
 
     //printf("\t\t\tGot values\n");
@@ -36,14 +37,14 @@ uint8_t avg_filter(uint8_t* image, size_t* pos, uint8_t kernel_size){
         // Get the value of the image using the positions we
         // calculated before and divide in each step to prevent
         // overflow remember acc is uint8
-        avg += *(values + i) / total_elements;
+        avg += *(values + i);
     }
 
     free(values);
+    result = (uint8_t)(avg/ total_elements);
 
     // Return the result
-    return avg;
-
+    return result;
 }
 
 
